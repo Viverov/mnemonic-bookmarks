@@ -1,6 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Define the MnemonicBookmark interface
 interface MnemonicBookmark {
@@ -25,28 +27,79 @@ function getLineSnippet(document: vscode.TextDocument, line: number): string {
 	return document.lineAt(line).text.slice(0, SNIPPET_LENGTH);
 }
 
-function updateEditorDecorations(editor: vscode.TextEditor, bookmarks: MnemonicBookmark[]) {
+const ICON_DIR = '.mnemonic-bookmarks-icons';
+
+function getIconDir(context: vscode.ExtensionContext): string {
+	const workspaceFolders = vscode.workspace.workspaceFolders;
+	const baseDir = workspaceFolders && workspaceFolders.length > 0
+		? workspaceFolders[0].uri.fsPath
+		: context.globalStorageUri.fsPath;
+	const iconDir = path.join(baseDir, ICON_DIR);
+	if (!fs.existsSync(iconDir)) {
+		fs.mkdirSync(iconDir, { recursive: true });
+	}
+	return iconDir;
+}
+
+function mnemonicSvgPath(mnemonic: string, context: vscode.ExtensionContext): string {
+	const iconDir = getIconDir(context);
+	return path.join(iconDir, `${mnemonic}.svg`);
+}
+
+function generateMnemonicSvg(mnemonic: string, filePath: string) {
+	const width = 32;
+	const height = 32;
+	const fontSize = 14;
+	const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns='http://www.w3.org/2000/svg' width='${width}' height='${height}' viewBox='0 0 ${width} ${height}'>
+  <circle cx='16' cy='16' r='15' fill='#fde047' stroke='#b45309' stroke-width='2'/>
+  <text x='16' y='21' text-anchor='middle' font-size='${fontSize}' font-family='monospace' fill='#222' font-weight='bold'>${mnemonic}</text>
+</svg>`;
+	fs.writeFileSync(filePath, svg, 'utf8');
+}
+
+function ensureMnemonicIcon(mnemonic: string, context: vscode.ExtensionContext): string {
+	const svgPath = mnemonicSvgPath(mnemonic, context);
+	if (!fs.existsSync(svgPath)) {
+		generateMnemonicSvg(mnemonic, svgPath);
+	}
+	return svgPath;
+}
+
+const editorDecorationTypes = new WeakMap<vscode.TextEditor, vscode.TextEditorDecorationType[]>();
+
+function updateEditorDecorations(editor: vscode.TextEditor, bookmarks: MnemonicBookmark[], context: vscode.ExtensionContext) {
 	if (!editor) {return;}
 	const filePath = editor.document.uri.toString();
-	const decorations: vscode.DecorationOptions[] = bookmarks
-		.filter(b => b.filePath === filePath)
-		.map(b => ({
+	const decorations: { [icon: string]: vscode.DecorationOptions[] } = {};
+	for (const b of bookmarks.filter(b => b.filePath === filePath)) {
+		const iconPath = ensureMnemonicIcon(b.mnemonic, context);
+		if (!decorations[iconPath]) decorations[iconPath] = [];
+		decorations[iconPath].push({
 			range: new vscode.Range(b.line, 0, b.line, 0),
-			renderOptions: {
-				after: {
-					contentText: `[${b.mnemonic}]`,
-					color: '#888',
-					margin: '0 0 0 1em',
-				},
-			},
-		}));
-	editor.setDecorations(mnemonicDecorationType, decorations);
+		});
+	}
+	// Clear all previous decorations
+	if (editorDecorationTypes.has(editor)) {
+		for (const decoType of editorDecorationTypes.get(editor)!) {
+			editor.setDecorations(decoType, []);
+		}
+	}
+	editorDecorationTypes.set(editor, []);
+	for (const iconPath in decorations) {
+		const decoType = vscode.window.createTextEditorDecorationType({
+			gutterIconPath: iconPath,
+			gutterIconSize: 'contain',
+		});
+		editor.setDecorations(decoType, decorations[iconPath]);
+		editorDecorationTypes.set(editor, [...editorDecorationTypes.get(editor)!, decoType]);
+	}
 }
 
 function updateAllVisibleEditors(context: vscode.ExtensionContext) {
 	const bookmarks: MnemonicBookmark[] = context.workspaceState.get('mnemonicBookmarks', []);
 	for (const editor of vscode.window.visibleTextEditors) {
-		updateEditorDecorations(editor, bookmarks);
+		updateEditorDecorations(editor, bookmarks, context);
 	}
 }
 
