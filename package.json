@@ -10,11 +10,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:mnemonic-bookmarks.setBookmark",
-    "onCommand:mnemonic-bookmarks.listBookmarks",
-    "onCommand:mnemonic-bookmarks.gotoBookmark",
-    "onCommand:mnemonic-bookmarks.removeBookmark",
-    "onCommand:mnemonic-bookmarks.deleteAllBookmarks"
+    "*"
   ],
   "main": "./out/extension.js",
   "contributes": {
