@@ -1,9 +1,10 @@
 {
   "name": "mnemonic-bookmarks",
+  "publisher": "Viverov",
   "displayName": "mnemonic-bookmarks",
   "repository": {
     "type": "git",
-    "url": "https://https://github.com/Viverov/mnemonic-bookmarks"
+    "url": "https://github.com/Viverov/mnemonic-bookmarks"
   },
   "description": "",
   "version": "0.0.1",
