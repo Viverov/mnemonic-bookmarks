@@ -1,71 +1,37 @@
-# mnemonic-bookmarks README
+# Mnemonic Bookmarks VSCode Extension
 
-This is the README for your extension "mnemonic-bookmarks". After writing up a brief description, we recommend including the following sections.
+Mnemonic Bookmarks lets you set, jump to, list, and remove bookmarks in your code using memorable mnemonics.
 
 ## Features
+- Set a bookmark at the current line with a mnemonic label
+- List all mnemonic bookmarks in the workspace
+- Jump to a bookmark by mnemonic
+- Remove a bookmark by mnemonic
+- Delete all bookmarks (with confirmation)
+- Bookmarks follow code even if lines are added or removed above
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## Usage
+- Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`)
+- Use commands:
+  - `Set Mnemonic Bookmark`
+  - `List Mnemonic Bookmarks`
+  - `Go to Mnemonic Bookmark`
+  - `Remove Mnemonic Bookmark`
+  - `Delete All Mnemonic Bookmarks`
 
-For example if there is an image subfolder under your extension project workspace:
+## Limitations
+- Bookmarks are tracked by a snippet of the line's text. If the line is heavily edited or deleted, the bookmark may not move as expected.
+- Bookmarks are stored per workspace.
 
-\!\[feature X\]\(images/feature-x.png\)
+## Heavy AI Usage Warning
+**Warning:** This extension was developed with the assistance of AI tools. Some features or logic may be experimental or subject to change. Use at your own risk, especially in critical environments.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## License
 
-## Requirements
+MIT License
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-## Extension Settings
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

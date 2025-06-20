@@ -7,6 +7,7 @@ interface MnemonicBookmark {
 	mnemonic: string;
 	filePath: string;
 	line: number;
+	snippet: string;
 }
 
 // Restore text-based decoration for mnemonic bookmarks
@@ -16,6 +17,13 @@ const mnemonicDecorationType = vscode.window.createTextEditorDecorationType({
 		color: '#888',
 	},
 });
+
+const SNIPPET_LENGTH = 40;
+
+function getLineSnippet(document: vscode.TextDocument, line: number): string {
+	if (line < 0 || line >= document.lineCount) {return '';}
+	return document.lineAt(line).text.slice(0, SNIPPET_LENGTH);
+}
 
 function updateEditorDecorations(editor: vscode.TextEditor, bookmarks: MnemonicBookmark[]) {
 	if (!editor) {return;}
@@ -69,6 +77,7 @@ export function activate(context: vscode.ExtensionContext) {
 		const document = editor.document;
 		const filePath = document.uri.toString();
 		const line = editor.selection.active.line;
+		const snippet = getLineSnippet(document, line);
 
 		// Load existing bookmarks
 		const bookmarks: MnemonicBookmark[] = context.workspaceState.get('mnemonicBookmarks', []);
@@ -77,7 +86,7 @@ export function activate(context: vscode.ExtensionContext) {
 			return;
 		}
 
-		bookmarks.push({ mnemonic, filePath, line });
+		bookmarks.push({ mnemonic, filePath, line, snippet });
 		await context.workspaceState.update('mnemonicBookmarks', bookmarks);
 		vscode.window.showInformationMessage(`Bookmark set: ${mnemonic} → ${document.fileName}:${line + 1}`);
 		updateAllVisibleEditors(context);
@@ -176,7 +185,7 @@ export function activate(context: vscode.ExtensionContext) {
 			{ modal: true },
 			'Yes', 'No'
 		);
-		if (confirm !== 'Yes') return;
+		if (confirm !== 'Yes') {return;}
 		await context.workspaceState.update('mnemonicBookmarks', []);
 		updateAllVisibleEditors(context);
 		vscode.window.showInformationMessage('All mnemonic bookmarks have been deleted.');
@@ -186,11 +195,42 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.window.onDidChangeActiveTextEditor(() => updateAllVisibleEditors(context)),
 		vscode.workspace.onDidOpenTextDocument(() => updateAllVisibleEditors(context)),
-		vscode.workspace.onDidChangeTextDocument(() => updateAllVisibleEditors(context)),
-		vscode.window.onDidChangeVisibleTextEditors(() => updateAllVisibleEditors(context))
+		vscode.window.onDidChangeVisibleTextEditors(() => updateAllVisibleEditors(context)),
+		vscode.workspace.onDidChangeTextDocument(async (event) => {
+			const uri = event.document.uri.toString();
+			let bookmarks: MnemonicBookmark[] = context.workspaceState.get('mnemonicBookmarks', []);
+			let changed = false;
+			bookmarks = bookmarks.map(b => {
+				if (b.filePath !== uri) {return b;}
+				// Try to find the snippet near the old line
+				const doc = event.document;
+				let newLine = b.line;
+				let found = false;
+				for (let offset = 0; offset <= 20 && !found; offset++) {
+					for (const delta of [offset, -offset]) {
+						const candidate = b.line + delta;
+						if (candidate < 0 || candidate >= doc.lineCount) {continue;}
+						const candidateSnippet = getLineSnippet(doc, candidate);
+						if (candidateSnippet === b.snippet) {
+							newLine = candidate;
+							found = true;
+							break;
+						}
+					}
+				}
+				if (found && newLine !== b.line) {
+					changed = true;
+					return { ...b, line: newLine };
+				}
+				return b;
+			});
+			if (changed) {
+				await context.workspaceState.update('mnemonicBookmarks', bookmarks);
+			}
+			updateAllVisibleEditors(context);
+		})
 	);
 
-	// Initial decorations (call directly, not in setTimeout)
 	updateAllVisibleEditors(context);
 
 	context.subscriptions.push(setBookmark, listBookmarks, gotoBookmark, removeBookmark, deleteAllBookmarks);
