@@ -1,0 +1,67 @@
+{
+  "name": "mnemonic-bookmarks",
+  "displayName": "mnemonic-bookmarks",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.71.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:mnemonic-bookmarks.setBookmark",
+    "onCommand:mnemonic-bookmarks.listBookmarks",
+    "onCommand:mnemonic-bookmarks.gotoBookmark",
+    "onCommand:mnemonic-bookmarks.removeBookmark",
+    "onCommand:mnemonic-bookmarks.deleteAllBookmarks"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "mnemonic-bookmarks.helloWorld",
+        "title": "Hello World"
+      },
+      {
+        "command": "mnemonic-bookmarks.setBookmark",
+        "title": "Set Mnemonic Bookmark"
+      },
+      {
+        "command": "mnemonic-bookmarks.listBookmarks",
+        "title": "List Mnemonic Bookmarks"
+      },
+      {
+        "command": "mnemonic-bookmarks.gotoBookmark",
+        "title": "Go to Mnemonic Bookmark"
+      },
+      {
+        "command": "mnemonic-bookmarks.removeBookmark",
+        "title": "Remove Mnemonic Bookmark"
+      },
+      {
+        "command": "mnemonic-bookmarks.deleteAllBookmarks",
+        "title": "Delete All Mnemonic Bookmarks"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.101.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "eslint": "^9.25.1",
+    "typescript": "^5.8.3",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
