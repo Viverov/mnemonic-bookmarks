@@ -10,6 +10,12 @@ Mnemonic Bookmarks lets you set, jump to, list, and remove bookmarks in your cod
 - Delete all bookmarks (with confirmation)
 - Bookmarks follow code even if lines are added or removed above
 
+## Screenshots
+
+### Mnemonic Bookmarks in the Editor
+![Mnemonic Bookmarks in the Editor](images/bookmark-demo.png)
+
+
 ## Usage
 - Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`)
 - Use commands:
