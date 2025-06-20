@@ -1,6 +1,10 @@
 {
   "name": "mnemonic-bookmarks",
   "displayName": "mnemonic-bookmarks",
+  "repository": {
+    "type": "git",
+    "url": "https://https://github.com/Viverov/mnemonic-bookmarks"
+  },
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -50,7 +54,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.101.0",
+    "@types/vscode": "^1.71.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
